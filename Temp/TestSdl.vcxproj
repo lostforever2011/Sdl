@@ -86,6 +86,7 @@
     <Text Include="font.txt" />
     <Text Include="Rend.txt" />
     <Text Include="Text.txt" />
+    <Text Include="Text1.txt" />
     <Text Include="Tut1.txt" />
     <Text Include="Tut2.txt" />
     <Text Include="Viewport.txt" />

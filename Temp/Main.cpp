@@ -56,9 +56,9 @@ protected:
 };
 
 Surface::Surface() :
-	m_pTexture(0),
-	m_width(0),
-	m_height(0)
+m_pTexture(0),
+m_width(0),
+m_height(0)
 {
 }
 
@@ -274,7 +274,7 @@ StatusCode Image::LoadPng(const String &path, SDL_Renderer *pRenderer)
 	}
 
 	//Color key image
-	(void) SDL_SetColorKey(pSurface, SDL_TRUE, SDL_MapRGB(pSurface->format, 0, 0xFF, 0xFF));
+	(void)SDL_SetColorKey(pSurface, SDL_TRUE, SDL_MapRGB(pSurface->format, 0, 0xFF, 0xFF));
 
 	//Create texture from surface pixels
 	m_pTexture = SDL_CreateTextureFromSurface(pRenderer, pSurface);
@@ -311,7 +311,7 @@ StatusCode Image::LoadText(SDL_Renderer *pRenderer, TTF_Font *pFont, const Strin
 		return STATUS_CODE_FAILURE;
 	}
 
-		//Create texture from surface pixels
+	//Create texture from surface pixels
 	m_pTexture = SDL_CreateTextureFromSurface(pRenderer, pSurface);
 	if (0 == m_pTexture)
 	{
@@ -331,7 +331,7 @@ StatusCode Image::LoadText(SDL_Renderer *pRenderer, TTF_Font *pFont, const Strin
 void Image::Render(Renderer &renderer, const uint32_t x, const uint32_t y, SDL_Rect *pClip)
 {
 	//Set rendering space and render to screen
-	SDL_Rect renderQuad = { x, y, GetWidth(), GetHeight()};
+	SDL_Rect renderQuad = { x, y, GetWidth(), GetHeight() };
 
 	if (0 != pClip)
 	{
@@ -392,7 +392,7 @@ private:
 };
 
 Font::Font() :
-	m_pFont(0)
+m_pFont(0)
 {
 }
 
@@ -445,9 +445,9 @@ void Load()
 		return;
 	}
 
-	if( TTF_Init() == -1 )
+	if (TTF_Init() == -1)
 	{
-		std::cout <<  "SDL_ttf could not initialize, error: %s\n" << TTF_GetError();
+		std::cout << "SDL_ttf could not initialize, error: %s\n" << TTF_GetError();
 		return;
 	}
 
@@ -463,66 +463,38 @@ void Load()
 	Renderer renderer(window);
 	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , renderer.Create());
 
-//	Image background;
-//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , background.LoadPng("GRS2ROC.bmp", renderer.GetRenderer()));
+	//	Image background;
+	//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , background.LoadPng("GRS2ROC.bmp", renderer.GetRenderer()));
 
-//	Font lazyFont;
-//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , lazyFont.Create("lazy.ttf", 28));
+	//	Font lazyFont;
+	//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , lazyFont.Create("lazy.ttf", 28));
 
-//	SDL_Color textColor = { 0, 0, 0 };
+	//	SDL_Color textColor = { 0, 0, 0 };
 
-//	Image txtImage;
-//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , txtImage.LoadText(renderer.GetRenderer(), lazyFont.Get(), "Hello World!", textColor));
+	//	Image txtImage;
+	//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , txtImage.LoadText(renderer.GetRenderer(), lazyFont.Get(), "Hello World!", textColor));
 
-//	Image foo;
-//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , foo.LoadPng("foo.png", renderer.GetRenderer()));
+	//	Image foo;
+	//	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , foo.LoadPng("foo.png", renderer.GetRenderer()));
 
-
+	//Image tileSet;
+	//ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , tileSet.LoadPng("grass-tiles-2-small.png", renderer.GetRenderer()));
 
 
 	Image tileSet;
-	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , tileSet.LoadPng("grass-tiles-2-small.png", renderer.GetRenderer()));
-
-
-	//Walking animation
-	const int WALKING_ANIMATION_FRAMES = 4;
-	SDL_Rect spritClips[WALKING_ANIMATION_FRAMES];
-
-	//Set sprite clips
-	spritClips[ 0 ].x = 0;
-	spritClips[ 0 ].y = 0;
-	spritClips[ 0 ].w = 32;
-	spritClips[ 0 ].h = 32;
-
-	spritClips[ 1 ].x =  64;
-	spritClips[ 1 ].y =   0;
-	spritClips[ 1 ].w =  64;
-	spritClips[ 1 ].h = 205;
-
-	spritClips[ 2 ].x = 128;
-	spritClips[ 2 ].y =   0;
-	spritClips[ 2 ].w =  64;
-	spritClips[ 2 ].h = 205;
-
-	spritClips[ 3 ].x = 196;
-	spritClips[ 3 ].y =   0;
-	spritClips[ 3 ].w =  64;
-	spritClips[ 3 ].h = 205;
-
-	//Current animation frame
-	uint32_t frame = 0;
+	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, != , tileSet.LoadPng("$Human_HF1_Male_8.png", renderer.GetRenderer()));
 
 
 	uint32_t map[20][20] =
 	{
-		{1, 1, 1, 1, 1, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 1, 1, 1, 1, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 1, 1, 1, 1, 19, 19, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 1, 1, 1, 1, 19, 19, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 1, 1, 1, 1, 19, 19, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 1, 1, 1, 1, 19, 19, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 1, 1, 1, 1, 19, 19, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{ 1, 1, 1, 1, 1, 19, 19, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{ 1, 1, 1, 1, 1, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 19, 19, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 19, 19, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 19, 19, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 19, 19, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 19, 19, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 19, 19, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -530,12 +502,37 @@ void Load()
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 	};
+
+	//Walking animation
+	const int WALKING_ANIMATION_FRAMES = 3;
+	SDL_Rect pSpriteClips[WALKING_ANIMATION_FRAMES];;
+
+	//Set sprite clips
+	pSpriteClips[0].x = 0;
+	pSpriteClips[0].y = 0;
+	pSpriteClips[0].w = 64;
+	pSpriteClips[0].h = 205;
+
+	pSpriteClips[1].x = 64;
+	pSpriteClips[1].y = 0;
+	pSpriteClips[1].w = 64;
+	pSpriteClips[1].h = 205;
+
+	pSpriteClips[2].x = 128;
+	pSpriteClips[2].y = 0;
+	pSpriteClips[2].w = 64;
+	pSpriteClips[2].h = 205;
+
+
+	//Current animation frame
+	int frame = 0;
+
 
 	uint32_t pos = 0;
 	bool shouldQuit = false;
@@ -557,16 +554,14 @@ void Load()
 					break;
 
 				case SDLK_DOWN:
+					++frame;
+					pos += 10;
 					break;
 
 				case SDLK_LEFT:
-					pos -= 10;
-					++frame;
 					break;
 
 				case SDLK_RIGHT:
-					pos += 10;
-					++frame;
 					break;
 
 				default:
@@ -575,41 +570,53 @@ void Load()
 			}
 		}
 
+	
+
 		//The camera area
-		SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+		//SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 		//Clear screen
 		renderer.SetColour(0xFF, 0xaa, 0xFF, 0x10);
 		renderer.Clear();
 
-		//Render current frame
-		SDL_Rect* pCurrentClip = &spritClips[0];
-
-		//Render current frame
-
 		TileSet set;
+		set.m_tileHeight = 70;
+		set.m_tileWidth = 70;
+		set.m_columns = 3;
 
-		for (int i = 0; i < 20; ++i)
-		{
-			for (int j = 0; j < 20; ++j)
-			{
-				uint32_t gid = map[i][j];
-				SDL_Rect rect = set.GetTile(gid);
-				tileSet.Render(renderer, 32 * j, 32 * i, &rect);
-			}
-		}
 
-		renderer.Present();
-
-		//++frame;
-		//Cycle animation
-		//if( frame / 4 >= WALKING_ANIMATION_FRAMES )
+		//for (int i = 0; i < 20; ++i)
 		//{
-			//frame = 0;
+		//	for (int j = 0; j < 20; ++j)
+		//	{
+		//		uint32_t gid = map[i][j];
+		//		SDL_Rect rect = set.GetTile(gid);
+		//		tileSet.Render(renderer, 32 * j, 32 * i, &rect);
+		//	}
 		//}
 
-		//Update screen
-		renderer.Present();
+		int tile = frame;
+
+		if (1 == tile)
+			tile = 2;
+
+
+			SDL_Rect rect = set.GetTile(tile);
+			tileSet.Render(renderer, 0, pos, &rect);
+
+			//Update screen
+			renderer.Present();
+		
+
+		
+
+		//Cycle animation
+		if (frame  >= 2)
+		{
+			frame = 0;
+		}
+
+		
 	}
 }
 
