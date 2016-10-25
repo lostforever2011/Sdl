@@ -1,0 +1,200 @@
+#include <iostream>
+#include <string>
+
+#include <SDL.h>
+#include <SDL_image.h>
+
+//! Status code type.
+typedef signed char        int8_t;
+typedef short              int16_t;
+typedef int                int32_t;
+typedef long long          int64_t;
+typedef unsigned char      uint8_t;
+typedef unsigned short     uint16_t;
+typedef unsigned int       uint32_t;
+typedef unsigned long long uint64_t;
+
+typedef uint8_t StatusCode;
+
+const StatusCode STATUS_CODE_SUCCESS = 0;
+const StatusCode STATUS_CODE_FAILURE = 1;
+
+typedef std::string String;
+
+
+//! Return if result of expression tests true using operator against statusCode
+#define ACTIV_RETURN_IF(statusCode, operator, expression)															\
+	do																												\
+	{																												\
+		if (expression operator statusCode)																			\
+			return;																									\
+	}																												\
+	while (false)
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+class Window;
+
+class Surface
+{
+public:
+	friend Window;
+	Surface();
+	virtual ~Surface();
+
+protected:
+	SDL_Surface	*m_pSurface;
+};
+
+Surface::Surface() :
+	m_pSurface(0)
+{
+}
+
+Surface::~Surface()
+{
+	if (0 != m_pSurface)
+		SDL_FreeSurface(m_pSurface);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+class Window
+{
+public:
+	Window();
+	~Window();
+
+	StatusCode Create(const String &name, const uint32_t width, const uint32_t height);
+	StatusCode UpdateWindowSurface();
+	StatusCode BlitSurface(const Surface *pSurface);
+
+private:
+	SDL_Window	*m_pWindow;
+	SDL_Surface	*m_pSurface;
+};
+
+Window::Window() :
+	m_pWindow(0),
+	m_pSurface(0)
+{
+}
+
+Window::~Window()
+{
+	if (0 != m_pWindow)
+		SDL_DestroyWindow(m_pWindow);
+}
+
+StatusCode Window::Create(const String &name, const uint32_t width, const uint32_t height)
+{
+	if (0 != m_pWindow)
+		return STATUS_CODE_FAILURE;
+
+	//Create window
+	m_pWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+
+	if (0 == m_pWindow)
+	{
+		std::cout << "Could not create window, error - " << SDL_GetError() << std::endl;
+		return STATUS_CODE_FAILURE;
+	}
+
+	//Get window surface
+	m_pSurface = SDL_GetWindowSurface(m_pWindow);
+
+	if (0 == m_pSurface)
+	{
+		std::cout << "Could not get window surface, error - " << SDL_GetError() << std::endl;
+		return STATUS_CODE_FAILURE;
+	}
+
+	return STATUS_CODE_SUCCESS;
+}
+
+StatusCode Window::UpdateWindowSurface()
+{
+	//Update the surface
+	if (0 != SDL_UpdateWindowSurface(m_pWindow))
+	{
+		std::cout << "Could not update window surface, error - " << SDL_GetError() << std::endl;
+		return STATUS_CODE_FAILURE;
+	}
+
+	return STATUS_CODE_SUCCESS;
+}
+
+StatusCode Window::BlitSurface(const Surface *pSurface)
+{
+	//Apply the image
+	if (0 != SDL_BlitSurface(pSurface->m_pSurface, NULL, m_pSurface, NULL))
+	{
+		std::cout << "Failed to blit surface, error - " << SDL_GetError() << std::endl;
+		return STATUS_CODE_FAILURE;
+	}
+
+	return STATUS_CODE_SUCCESS;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+class Image : public Surface
+{
+public:
+	StatusCode LoadBmp(const String &path);
+};
+
+StatusCode Image::LoadBmp(const String &path)
+{
+	if (0 != m_pSurface)
+		return STATUS_CODE_FAILURE;
+
+	m_pSurface = SDL_LoadBMP(path.c_str());
+
+	if (0 == m_pSurface)
+	{
+		std::cout << "Unable to load image <" << path << ">, error - " << SDL_GetError() << std::endl;
+		return STATUS_CODE_FAILURE;
+	}
+
+	return STATUS_CODE_SUCCESS;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+void Load()
+{
+	const uint32_t SCREEN_WIDTH = 640;
+	const uint32_t SCREEN_HEIGHT = 480;
+
+	if (0 != SDL_Init(SDL_INIT_VIDEO))
+	{
+		std::cout << "Unable to initialize SDL, error - " << SDL_GetError() << std::endl;
+	}
+
+	Image image;
+	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, !=, image.LoadBmp("hello_world.bmp"));
+
+	Window window;
+	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, !=, window.Create("SDLTest", SCREEN_WIDTH, SCREEN_HEIGHT));
+
+	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, !=, window.BlitSurface(&image));
+
+	ACTIV_RETURN_IF(STATUS_CODE_SUCCESS, !=, window.UpdateWindowSurface());
+
+	//Wait two seconds
+	SDL_Delay( 50000 );
+}
+
+int main( int argc, char* args[] )
+{
+	Load();
+
+
+
+	return 0;
+}
